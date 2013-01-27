@@ -62,7 +62,7 @@ if os.path.exists(CURRENT):
 os.symlink(os.path.relpath(target, TARGET), CURRENT)
 
 # Start scanning
-logger.info("Scanning {} ...".format(TARGET))
+logger.info("Scanning %s ...", TARGET)
 
 targets = {}
 
@@ -77,7 +77,7 @@ for target in glob.glob(os.path.join(TARGET, PREFIX + "*")):
     # Save into targets list
     targets[timestamp] = target
 
-logger.info("...Found {} targets".format(len(targets)))
+logger.info("...Found %s targets", len(targets))
 
 # Get keys sorted by timedelta
 timestamps = sorted(targets.keys())
@@ -85,7 +85,7 @@ timestamps = sorted(targets.keys())
 # Exclude most recent target
 last = targets.pop(timestamps.pop())
 
-logger.info("Excluding most recent target {}".format(last))
+logger.info("Excluding most recent target %s", last)
 
 # Collect hourly targets consuming deltas list
 logger.info("Grouping targets...")
@@ -111,9 +111,9 @@ while timestamps:
         # Weekly
         weekly[timestamp] = target
 
-logger.info("...collected {} hourly targets".format(len(hourly)))
-logger.info("...collected {} daily targets".format(len(daily)))
-logger.info("...collected {} weekly targets".format(len(weekly)))
+logger.info("...collected %s hourly targets", len(hourly))
+logger.info("...collected %s daily targets", len(daily))
+logger.info("...collected %s weekly targets", len(weekly))
 
 # Group targets
 logger.info("Finding obsolete targets...")
@@ -138,11 +138,11 @@ for week, targets in group.iteritems():
     if len(targets) > 1:
         purge.extend(sorted(targets)[:-1])
 
-logger.info("{} targets to be purged".format(len(purge)))
+logger.info("%s targets to be purged", len(purge))
 
 # Purge targets starting from the oldest one
 for target in sorted(purge):
-    logger.info("..purging target {}".format(target))
+    logger.info("..purging target %s", target)
 
     shutil.rmtree(os.path.join(TARGET, target))
 
