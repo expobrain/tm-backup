@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division, print_function, unicode_literals
+
 import datetime
 import glob
-import itertools
 import logging
 import os
 import shutil
@@ -120,21 +120,21 @@ logger.info("Finding obsolete targets...")
 
 group = {}
 
-for timestamp, target in daily.iteritems():
+for timestamp, target in daily.items():
     days = (now - timestamp).days
 
     group.setdefault(days, []).append(target)
 
 
-for timestamp, target in weekly.iteritems():
+for timestamp, target in weekly.items():
     week = timestamp.isocalendar()[:2]
-    
+
     group.setdefault(week, []).append(target)
 
 # Make target purge list
 purge = []
 
-for week, targets in group.iteritems():
+for week, targets in group.items():
     if len(targets) > 1:
         purge.extend(sorted(targets)[:-1])
 
@@ -148,4 +148,3 @@ for target in sorted(purge):
 
 # End
 logger.info("End.")
-
