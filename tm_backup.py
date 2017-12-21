@@ -11,6 +11,27 @@ import shutil
 import sys
 
 
+class Local:
+
+    def rename(self, src, dest):
+        return os.rename(src, dest)
+
+    def exists(self, path):
+        return os.path.exists(path)
+
+    def remove(self, path):
+        return os.remove(path)
+
+    def symlink(self, scr, dest):
+        return os.symlink(scr, dest)
+
+    def glob(self, pattern):
+        return glob.glob(pattern)
+
+    def rmtree(self, path):
+        return shutil.rmtree(path)
+
+
 if __name__ == "__main__":
     # Check arguments
     if len(sys.argv) != 3:
@@ -56,18 +77,19 @@ if __name__ == "__main__":
 
         raise RuntimeError
 
-    os.rename(INCOMPLETE, target)
+    fs = Local()
+    fs.rename(INCOMPLETE, target)
 
-    if os.path.exists(CURRENT):
-        os.remove(CURRENT)
-    os.symlink(os.path.relpath(target, TARGET), CURRENT)
+    if fs.exists(CURRENT):
+        fs.remove(CURRENT)
+    fs.symlink(os.path.relpath(target, TARGET), CURRENT)
 
     # Start scanning
     logger.info("Scanning %s ...", TARGET)
 
     targets = {}
 
-    for target in glob.glob(os.path.join(TARGET, PREFIX + "*")):
+    for target in fs.glob(os.path.join(TARGET, PREFIX + "*")):
         # Normalise target to filename
         target = os.path.split(target)[1]
 
@@ -126,7 +148,6 @@ if __name__ == "__main__":
 
         group.setdefault(days, []).append(target)
 
-
     for timestamp, target in weekly.items():
         week = timestamp.isocalendar()[:2]
 
@@ -145,7 +166,7 @@ if __name__ == "__main__":
     for target in sorted(purge):
         logger.info("..purging target %s", target)
 
-        shutil.rmtree(os.path.join(TARGET, target))
+        fs.rmtree(os.path.join(TARGET, target))
 
     # End
     logger.info("End.")
