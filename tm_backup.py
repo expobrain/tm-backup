@@ -19,7 +19,7 @@ from paramiko.client import SSHClient, AutoAddPolicy
 logging.basicConfig(
     format="format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
     datefmt="%m-%d %H:%M:%S",
-    level=logging.DEBUG
+    # level=logging.DEBUG
 )
 logger = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ class SSH(AbstractFs):
 
         return content
 
-    def _exec(self, cmd):
+    def _exec(self, cmd, log_error=True):
         channel = self._ssh.get_transport().open_session()
         channel.exec_command(cmd)
 
@@ -142,7 +142,7 @@ class SSH(AbstractFs):
 
         logger.debug(stdout)
 
-        if exit_code != 0:
+        if exit_code != 0 and log_error:
             logger.error(stderr)
             logger.error("Command %s failed with exit code %s", cmd, exit_code)
 
@@ -162,7 +162,7 @@ class SSH(AbstractFs):
 
     def exists(self, path):
         logger.debug("Checking if %s exists...", path)
-        exit_code, _, _ = self._exec('test -f "{}"'.format(path))
+        exit_code, _, _ = self._exec('test -f "{}"'.format(path), log_error=False)
         exists = exit_code == 0
 
         logger.debug("File %s does%s exists.", path, "" if exists else " not")
@@ -304,8 +304,8 @@ if __name__ == "__main__":
 
     fs.rename(incomplete_path.path, backup_path.path)
 
-    if fs.exists(current_path):
-        fs.remove(current_path)
+    if fs.exists(current_path.path):
+        fs.remove(current_path.path)
     fs.symlink(backup_path.path, current_path.path, relative_to=target_path.path)
 
     # Start scanning
