@@ -34,7 +34,6 @@ class SSHError(Exception):
 
 
 class AbstractFs:
-
     def open(self, filename, mode="r"):
         raise NotImplementedError(self)
 
@@ -64,7 +63,6 @@ class AbstractFs:
 
 
 class Local(AbstractFs):
-
     def open(self, filename, mode="r"):
         return open(filename, mode=mode)
 
@@ -108,9 +106,9 @@ class SSH(AbstractFs):
 
         logger.info(
             "Connecting to %s%s%s",
-            "{}@".format(username) or '',
+            "{}@".format(username) or "",
             host,
-            ":{}".format(basepath) or ''
+            ":{}".format(basepath) or "",
         )
         self._ssh.connect(host, username=username, compress="true")
 
@@ -124,7 +122,7 @@ class SSH(AbstractFs):
 
         while True:
             buffer = recv_fn(self.recv_size)
-            content += buffer.decode('utf-8')
+            content += buffer.decode("utf-8")
 
             if len(buffer) == 0:
                 break
@@ -230,7 +228,7 @@ class URI:
     path = None
 
     def __init__(self, uri_str):
-        parts = os.path.abspath(uri_str).split('@')[:2]
+        parts = os.path.abspath(uri_str).split("@")[:2]
 
         if len(parts) == 2:
             user, uri = parts
@@ -289,13 +287,19 @@ if __name__ == "__main__":
 
     fs.copy(exclude_filename, exclude_filename_tmp)
 
-    subprocess.check_call([
-        "rsync", "-aSvz", "--partial",
-        "--delete", "--delete-excluded",
-        "--exclude-from={}".format(exclude_filename_tmp),
-        "--link-dest={}".format(current_path),
-        str(origin_path), str(incomplete_path)
-    ])
+    subprocess.check_call(
+        [
+            "rsync",
+            "-aSvz",
+            "--partial",
+            "--delete",
+            "--delete-excluded",
+            "--exclude-from={}".format(exclude_filename_tmp),
+            "--link-dest={}".format(current_path),
+            str(origin_path),
+            str(incomplete_path),
+        ]
+    )
 
     os.remove(exclude_filename_tmp)
 
@@ -318,7 +322,7 @@ if __name__ == "__main__":
         target_path = os.path.split(target_path)[1]
 
         # Extract timestamp and convert to timedelta from now
-        timestamp = target_path[len(PREFIX):]
+        timestamp = target_path[len(PREFIX) :]
         timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H_%M_%S")
 
         # Save into targets list
