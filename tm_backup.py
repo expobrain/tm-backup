@@ -290,7 +290,7 @@ if __name__ == "__main__":
     fs.copy(exclude_filename, exclude_filename_tmp)
 
     subprocess.check_call([
-        "rsync", "-aPSvz",
+        "rsync", "-aSvz", "--partial",
         "--delete", "--delete-excluded",
         "--exclude-from={}".format(exclude_filename_tmp),
         "--link-dest={}".format(current_path),
