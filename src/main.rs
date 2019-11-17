@@ -1,8 +1,13 @@
 #[macro_use]
 extern crate clap;
 
-use clap::{App, Arg, SubCommand};
-use log::{debug, error, info, warn};
+use log::{warn, info, error, debug};
+use clap::{App, Arg};
+use std::path::Path;
+
+mod sshuri;
+
+type SSHUri = String;
 
 const PREFIX: &str = "back-";
 
@@ -27,5 +32,9 @@ fn main() {
         )
         .get_matches();
 
-    // Same as above examples...
+    let source = Path::new(matches.value_of("SOURCE").unwrap());
+    let dest: SSHUri = matches.value_of("DEST").unwrap().to_string();
+
+    info!("{}",source.display());
+    info!("{}",dest);
 }
