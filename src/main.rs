@@ -1,8 +1,7 @@
-#[macro_use]
 extern crate clap;
 
-use log::{warn, info, error, debug};
 use clap::{App, Arg};
+use log::{debug, error, info, warn};
 use std::path::Path;
 
 mod sshuri;
@@ -35,6 +34,6 @@ fn main() {
     let source = Path::new(matches.value_of("SOURCE").unwrap());
     let dest: SSHUri = matches.value_of("DEST").unwrap().to_string();
 
-    info!("{}",source.display());
-    info!("{}",dest);
+    info!("{}", source.display());
+    info!("{}", dest);
 }

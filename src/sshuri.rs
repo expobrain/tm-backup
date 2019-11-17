@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct SSHUri {
@@ -13,6 +13,8 @@ impl SSHUri {
     pub fn from(src: &str) -> Result<Self, String> {
         let user;
         let uri;
+        let host;
+        let path;
 
         match src.find('@') {
             Some(n) => {
@@ -25,8 +27,15 @@ impl SSHUri {
             }
         }
 
-        let host = uri[..uri.find(":").unwrap()].to_string();
-        let path = PathBuf::from(uri[uri.find(":").unwrap() + 1..].to_string());
+        // let host = uri[..uri.find(":").unwrap()].to_string();
+        // let path = PathBuf::from(uri[uri.find(":").unwrap() + 1..].to_string());
+        match uri.find(':') {
+            Some(n) => {
+                host = uri[..n].to_string();
+                path = PathBuf::from(uri[n + 1..].to_string());
+            }
+            None => panic!(format!("Not a valid SSH URI {}", src)),
+        }
 
         Ok(SSHUri {
             original: src.to_string(),
