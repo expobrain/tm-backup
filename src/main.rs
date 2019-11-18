@@ -32,7 +32,7 @@ fn main() {
         .get_matches();
 
     let source = Path::new(matches.value_of("SOURCE").unwrap());
-    let dest: SSHUri = matches.value_of("DEST").unwrap().to_string();
+    let dest = SSHUri::from(matches.value_of("DEST").unwrap());
 
     info!("{}", source.display());
     info!("{}", dest);

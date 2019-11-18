@@ -27,8 +27,6 @@ impl SSHUri {
             }
         }
 
-        // let host = uri[..uri.find(":").unwrap()].to_string();
-        // let path = PathBuf::from(uri[uri.find(":").unwrap() + 1..].to_string());
         match uri.find(':') {
             Some(n) => {
                 host = uri[..n].to_string();
@@ -44,6 +42,18 @@ impl SSHUri {
             host,
             path,
         })
+    }
+
+    pub fn join(&self, parts: &[&str]) -> Self {
+        let path = parts.iter().fold(self.path.clone(), |acc, v| acc.join(v));
+
+        SSHUri {
+            original: self.original.clone(),
+            user: self.user.clone(),
+            uri: self.uri.clone(),
+            host: self.host.clone(),
+            path,
+        }
     }
 }
 
@@ -62,6 +72,22 @@ mod tests {
             host: "host".to_string(),
             path: PathBuf::from("/path"),
         });
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn join() {
+        let uri = SSHUri::from("user@host:/path/").unwrap();
+        let result = uri.join(&["child1", "child2"]);
+
+        let expected = SSHUri {
+            original: "user@host:/path/".to_string(),
+            user: Some("user".to_string()),
+            uri: "host:/path/".to_string(),
+            host: "host".to_string(),
+            path: PathBuf::from("/path/child1/child2"),
+        };
 
         assert_eq!(result, expected);
     }
