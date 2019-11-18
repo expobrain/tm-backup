@@ -1,6 +1,7 @@
 use std::path::PathBuf;
+use std::fmt;
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq,  Debug)]
 pub struct SSHUri {
     original: String,
     user: Option<String>,
@@ -54,6 +55,12 @@ impl SSHUri {
             host: self.host.clone(),
             path,
         }
+    }
+}
+
+impl fmt::Display for SSHUri{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.original)
     }
 }
 
